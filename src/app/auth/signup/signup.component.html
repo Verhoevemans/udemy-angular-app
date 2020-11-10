@@ -1,0 +1,35 @@
+<div class="row">
+    <div class="col-xs-6 col-sm-offset-3">
+        <div *ngIf="isLoading" class="loading">
+            <app-loading-spinner></app-loading-spinner>
+            <p>Processing signup...</p>
+        </div>
+        <form (ngSubmit)="onSignup(form)" #form="ngForm">
+            <div class="form-group">
+                <label for="email">E-mail</label>
+                <input type="email"
+                       id="email"
+                       name="email"
+                       ngModel
+                       required
+                       email
+                       [disabled]="isLoading"
+                       class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password"
+                       id="password"
+                       name="password"
+                       ngModel
+                       [disabled]="isLoading"
+                       required
+                       class="form-control">
+            </div>
+            <ng-template appPlaceholder></ng-template>
+            <button class="btn btn-primary" type="submit" [disabled]="form.invalid || isLoading">
+                Sign Up
+            </button>
+        </form>
+    </div>
+</div>

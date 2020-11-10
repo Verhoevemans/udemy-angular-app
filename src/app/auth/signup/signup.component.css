@@ -1,0 +1,8 @@
+.loading {
+    display: flex;
+    align-items: center;
+}
+
+.loading > p {
+    margin-left: 2em;
+}

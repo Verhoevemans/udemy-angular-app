@@ -1,0 +1,13 @@
+.recipe-full-image {
+    height: 350px;
+    width: 535px;
+}
+a {
+    cursor: pointer;
+}
+
+.navigation-error {
+    align-items: flex-end;
+    display: flex;
+    height: 100%;
+}
