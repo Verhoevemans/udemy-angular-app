@@ -5,12 +5,13 @@ import { Subject } from 'rxjs';
 import { Ingredient } from '../models/ingredient.model';
 import { Recipe } from '../models/recipe.model';
 import * as ShoppingListActions from '../shopping-list/store/shopping-list.actions';
+import * as fromShoppingList from '../shopping-list/store/shopping-list.reducers';
 
 @Injectable()
 export class RecipesService {
     private recipes: Recipe[] = [
         new Recipe(
-            'Chilli Con Carne',
+            'Chili Con Carne',
             'This recipe is only a test; don\'t actually cook this! But the description should not be too long.',
             'https://c1.staticflickr.com/3/2547/3862672238_30d378e7d6.jpg',
             [new Ingredient('Beans', 20), new Ingredient('Meat', 2)])
@@ -22,7 +23,7 @@ export class RecipesService {
     ];
     recipesChanged = new Subject<Recipe[]>();
 
-    constructor(private store: Store<{ shoppingList: { ingredients: Ingredient[] } }>) {}
+    constructor(private store: Store<fromShoppingList.AppState>) {}
 
     addIngredientsToShoppingList(ingredients: Ingredient[]) {
         this.store.dispatch(new ShoppingListActions.AddIngredients(ingredients));
