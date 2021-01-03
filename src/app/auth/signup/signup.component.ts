@@ -1,46 +1,49 @@
-import { Component, ComponentFactoryResolver, OnInit, ViewChild } from '@angular/core';
+import { Component, ComponentFactoryResolver, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
+import { take } from 'rxjs/operators';
 
-import { AuthResponseData, AuthService } from '../auth.service';
-import { delay, take } from 'rxjs/operators';
-import { Router } from '@angular/router';
 import { PlaceholderDirective } from '../../shared/placeholder/placeholder.directive';
 import { AlertComponent } from '../../shared/alert/alert.component';
+import * as AuthActions from '../store/auth.actions';
+import * as fromApp from '../store/auth.reducer';
 
 @Component({
     selector: 'app-signup',
     templateUrl: './signup.component.html',
     styleUrls: ['./signup.component.css']
 })
-export class SignupComponent {
+export class SignupComponent implements OnInit, OnDestroy {
     
     @ViewChild(PlaceholderDirective) alertHost: PlaceholderDirective;
     
     isLoading = false;
+    storeSubscription: Subscription;
     
-    constructor(private authService: AuthService,
-                private router: Router,
-                private componentFactoryResolver: ComponentFactoryResolver) { }
+    constructor(private componentFactoryResolver: ComponentFactoryResolver,
+                private store: Store<fromApp.State>) { }
+    
+    ngOnInit(): void {
+        this.storeSubscription = this.store.select('auth').subscribe((authState) => {
+            this.isLoading = authState.loading;
+            if (authState.authError) {
+                this.showErrorAllert(authState.authError);
+            }
+        })
+    }
+    
+    ngOnDestroy(): void {
+        if (this.storeSubscription) {
+            this.storeSubscription.unsubscribe();
+        }
+    }
     
     onSignup(form: NgForm): void {
-        const email = form.value.email;
-        const password = form.value.password;
-        this.isLoading = true;
-        
-        this.authService.signupUser(email, password)
-            .pipe(
-                delay(2000)
-            )
-            .subscribe(
-                (response: AuthResponseData) => {
-                    console.log(response);
-                    this.isLoading = false;
-                    this.router.navigate(['/recipes']);
-                }, (errorMessage) => {
-                    this.showErrorAllert(errorMessage);
-                    this.isLoading = false;
-                }
-            );
+        this.store.dispatch(new AuthActions.SignupStart({
+            email: form.value.email,
+            password: form.value.password
+        }));
     }
     
     showErrorAllert(errorMessage: string): void {

@@ -1,8 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { DataStorageService } from '../../shared/data-storage.service';
-import { AuthService } from '../../auth/auth.service';
+import { Store } from '@ngrx/store';
+import { map } from 'rxjs/operators';
+
 import { Recipe } from '../../models/recipe.model';
 import { User } from '../../models/user.model';
+import { DataStorageService } from '../../shared/data-storage.service';
+import * as AuthActions from '../../auth/store/auth.actions'
+import * as fromAppReducer from '../../store/app.reducer';
 
 @Component({
     selector: 'app-header',
@@ -14,13 +18,16 @@ export class HeaderComponent implements OnInit {
     isAuthenticated = false;
     
     constructor(private dataStorageService: DataStorageService,
-                private authService: AuthService) {
+                private store: Store<fromAppReducer.AppState>) {
     }
 
-    ngOnInit() {
-        this.authService.user.subscribe((user: User) => {
-            this.isAuthenticated = !!user;
-        })
+    ngOnInit(): void {
+        this.store.select('auth')
+            .pipe(
+                map((authState) => authState.user)
+            ).subscribe((user: User) => {
+                this.isAuthenticated = !!user;
+            })
     }
 
     onFetchData(): void {
@@ -36,6 +43,7 @@ export class HeaderComponent implements OnInit {
     }
 
     onLogout(): void {
-        this.authService.logout();
+        this.store.dispatch(new AuthActions.Logout());
     }
+    
 }

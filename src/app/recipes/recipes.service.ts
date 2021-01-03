@@ -5,10 +5,11 @@ import { Subject } from 'rxjs';
 import { Ingredient } from '../models/ingredient.model';
 import { Recipe } from '../models/recipe.model';
 import * as ShoppingListActions from '../shopping-list/store/shopping-list.actions';
-import * as fromShoppingList from '../shopping-list/store/shopping-list.reducers';
+import * as fromAppReducer from '../store/app.reducer';
 
 @Injectable()
 export class RecipesService {
+    
     private recipes: Recipe[] = [
         new Recipe(
             'Chili Con Carne',
@@ -23,7 +24,7 @@ export class RecipesService {
     ];
     recipesChanged = new Subject<Recipe[]>();
 
-    constructor(private store: Store<fromShoppingList.AppState>) {}
+    constructor(private store: Store<fromAppReducer.AppState>) {}
 
     addIngredientsToShoppingList(ingredients: Ingredient[]) {
         this.store.dispatch(new ShoppingListActions.AddIngredients(ingredients));
