@@ -3,9 +3,9 @@ import { Ingredient } from '../../models/ingredient.model';
 import * as ShoppingListActions from './shopping-list.actions';
 
 export interface State {
-    ingredients: Ingredient[],
-    editedIngredient: Ingredient,
-    editedIngredientIndex: number
+    ingredients: Ingredient[];
+    editedIngredient: Ingredient;
+    editedIngredientIndex: number;
 }
 
 const initialState: State = {

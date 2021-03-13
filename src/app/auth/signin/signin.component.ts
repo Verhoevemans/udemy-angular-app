@@ -6,8 +6,8 @@ import { take } from 'rxjs/operators';
 
 import { AlertComponent } from '../../shared/alert/alert.component';
 import { PlaceholderDirective } from '../../shared/placeholder/placeholder.directive';
+import * as fromAppReducer from '../../store/app.reducer';
 import * as AuthActions from '../store/auth.actions';
-import * as fromApp from '../store/auth.reducer';
 
 @Component({
     selector: 'app-signin',
@@ -22,7 +22,7 @@ export class SigninComponent implements OnInit, OnDestroy {
     storeSubscription: Subscription;
     
     constructor(private componentFactoryResolver: ComponentFactoryResolver,
-                private store: Store<fromApp.State>) {
+                private store: Store<fromAppReducer.AppState>) {
     }
     
     ngOnInit(): void {

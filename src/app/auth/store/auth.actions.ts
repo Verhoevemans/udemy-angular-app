@@ -44,8 +44,7 @@ export class SignupStart implements Action {
     constructor(public payload: { email: string, password: string }) {}
 }
 
-export type AuthActions =
-    | AuthenticateSuccess
+export type AuthActions = AuthenticateSuccess
     | AuthenticateFail
     | AutoLogin
     | LoginStart

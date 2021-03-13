@@ -1,12 +1,15 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Actions, Effect, ofType } from '@ngrx/effects';
+import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
 import { catchError, delay, map, switchMap, tap } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
 import { User } from '../../models/user.model';
+import * as RecipesActions from '../../recipes/store/recipes.actions';
+import * as fromApp from '../../store/app.reducer';
 import { AuthService } from '../auth.service';
 
 import * as AuthActions from './auth.actions';
@@ -75,7 +78,7 @@ export class AuthEffects {
     authRedirect = this.actions.pipe(
         ofType(AuthActions.AUTHENTICATE_SUCCESS),
         tap(() => {
-            this.router.navigate(['/recipes']);
+            this.store.dispatch(new RecipesActions.FetchRecipes());
         })
     );
     
@@ -99,7 +102,9 @@ export class AuthEffects {
     
     constructor(private actions: Actions,
                 private authService: AuthService,
+                private route: ActivatedRoute,
                 private router: Router,
+                private store: Store<fromApp.AppState>,
                 private httpClient: HttpClient) {}
     
     handleAuthentication(responseData: AuthResponseData) {
@@ -112,11 +117,12 @@ export class AuthEffects {
         localStorage.setItem('user-data', JSON.stringify(user));
         this.authService.setTokenExpiration(user.expirationDate.getTime() - new Date().getTime());
     
+        this.router.navigate(['/recipes']);
         return new AuthActions.AuthenticateSuccess(user);
     }
     
     handleError(errorResponse: HttpErrorResponse) {
-        console.log(errorResponse);
+        console.warn(errorResponse);
         let errorMessage = 'An error occurred';
         if (errorResponse.error && errorResponse.error.error) {
             switch (errorResponse.error.error.message) {

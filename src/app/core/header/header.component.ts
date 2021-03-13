@@ -2,10 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { map } from 'rxjs/operators';
 
-import { Recipe } from '../../models/recipe.model';
+import * as AuthActions from '../../auth/store/auth.actions';
 import { User } from '../../models/user.model';
-import { DataStorageService } from '../../shared/data-storage.service';
-import * as AuthActions from '../../auth/store/auth.actions'
+import * as RecipesActions from '../../recipes/store/recipes.actions';
 import * as fromAppReducer from '../../store/app.reducer';
 
 @Component({
@@ -17,8 +16,7 @@ export class HeaderComponent implements OnInit {
     
     isAuthenticated = false;
     
-    constructor(private dataStorageService: DataStorageService,
-                private store: Store<fromAppReducer.AppState>) {
+    constructor(private store: Store<fromAppReducer.AppState>) {
     }
 
     ngOnInit(): void {
@@ -27,19 +25,15 @@ export class HeaderComponent implements OnInit {
                 map((authState) => authState.user)
             ).subscribe((user: User) => {
                 this.isAuthenticated = !!user;
-            })
+            });
     }
 
     onFetchData(): void {
-        this.dataStorageService.getRecipes().subscribe((recipes) => {
-            console.log('recipes were retrieved:', recipes);
-        });
+        this.store.dispatch(new RecipesActions.FetchRecipes());
     }
 
     onSaveData(): void {
-        this.dataStorageService.storeRecipes().subscribe((response: Recipe[]) => {
-            console.log('Save was successful:', response);
-        });
+        this.store.dispatch(new RecipesActions.StoreRecipes());
     }
 
     onLogout(): void {

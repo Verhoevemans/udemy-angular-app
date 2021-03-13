@@ -9,6 +9,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AuthModule } from './auth/auth.module';
 import { AuthEffects } from './auth/store/auth.effects';
 import { CoreModule } from './core/core.module';
+import { RecipesEffects } from './recipes/store/recipes.effects';
 import { SharedModule } from './shared/shared.module';
 import { ShoppingListModule } from './shopping-list/shopping-list.module';
 import { appReducer } from './store/app.reducer';
@@ -23,7 +24,7 @@ import { appReducer } from './store/app.reducer';
         AuthModule,
         BrowserModule,
         CoreModule,
-        EffectsModule.forRoot([AuthEffects]),
+        EffectsModule.forRoot([AuthEffects, RecipesEffects]),
         HttpClientModule,
         SharedModule,
         ShoppingListModule,

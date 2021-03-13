@@ -1,11 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-
-import { Recipe } from '../../models/recipe.model';
-import { RecipesService } from '../recipes.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
-import { promise } from 'selenium-webdriver';
-import fulfilled = promise.fulfilled;
+import { map } from 'rxjs/operators';
+
+import * as fromApp from '../../store/app.reducer';
+import { Recipe } from '../../models/recipe.model';
 
 @Component({
     selector: 'app-recipe-list',
@@ -13,19 +13,22 @@ import fulfilled = promise.fulfilled;
     styleUrls: ['./recipe-list.component.css', '../../app.component.css']
 })
 export class RecipeListComponent implements OnInit, OnDestroy {
+    
     recipes: Recipe[];
     subscription: Subscription;
     navigationErrorOccurred: boolean;
 
-    constructor(private recipesService: RecipesService,
-                private router: Router,
-                private route: ActivatedRoute) {}
+    constructor(private router: Router,
+                private route: ActivatedRoute,
+                private store: Store<fromApp.AppState>) {}
 
     ngOnInit(): void {
-        this.recipes = this.recipesService.getRecipes();
-        this.subscription = this.recipesService.recipesChanged.subscribe((recipes: Recipe[]) => {
-            this.recipes = recipes;
-        });
+        this.subscription = this.store.select('recipes')
+            .pipe(
+                map((recipesState) => recipesState.recipes)
+            ).subscribe((recipes: Recipe[]) => {
+                this.recipes = recipes;
+            });
     }
 
     ngOnDestroy(): void {
@@ -36,7 +39,6 @@ export class RecipeListComponent implements OnInit, OnDestroy {
         this.router
             .navigate(['new'], {relativeTo: this.route})
             .then((fulfilled) => {
-                console.log('navigate promise returned', fulfilled);
                 this.navigationErrorOccurred = !fulfilled;
             });
     }
