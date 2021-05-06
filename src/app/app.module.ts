@@ -22,7 +22,7 @@ import { appReducer } from './store/app.reducer';
     imports: [
         AppRoutingModule,
         AuthModule,
-        BrowserModule,
+        BrowserModule.withServerTransition({ appId: 'serverApp' }),
         CoreModule,
         EffectsModule.forRoot([AuthEffects, RecipesEffects]),
         HttpClientModule,

@@ -11,7 +11,7 @@ import * as AuthActions from './store/auth.actions';
 export class AuthService {
     
     error = new Subject<String>();
-    tokenExpirationTimer: number;
+    tokenExpirationTimer;
 
     constructor(private httpClient: HttpClient,
                 private router: Router,
